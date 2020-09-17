@@ -1,4 +1,4 @@
-const prop_cats = {
+const stat_categories = {
   general: ["name", "stars"],
   baserunning: [
     "baserunningStars",
@@ -80,13 +80,6 @@ const abbrevs = {
   unthwackability: "unthwk",
   watchfulness: "watch",
 };
-
-const prop_flags = {
-  exclude: ["_id", "name", "bat"], //do not store these in player.props
-  dontRate: ["cinnamon", "fate", "soul", "pressurization"], //do not colour-divine these
-  bad: ["patheticism"], //invert these before rating
-};
-const base_tragicness = 0.1; //tragicness went up in season 3 so this is here if it goes up again
 
 const url_prefix = "https://blaseballcors.herokuapp.com/";
 const url = {
