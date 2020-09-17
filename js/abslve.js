@@ -18,6 +18,10 @@ const booleanify = (val) => {
   return val ? "⭕" : "❌";
 };
 
+const peanutAllergify = (val) => {
+  return val ? "🤢" : "🥜";
+};
+
 const renderStars = (stars, fk) => {
   if (fk == "none") {
     var value = " ";
@@ -47,6 +51,7 @@ const gameData = () => {
     teams: [],
     players: {},
     activeTeam: null,
+    sortKey: null,
     forbiddenKnowledge: "none",
     init() {
       this.teams = [];
@@ -93,6 +98,18 @@ const gameData = () => {
             player_list.push(this.players[id]);
           }
         }
+      }
+      if (this.sortKey != null) {
+        var order = (a, b) => {
+          return a[this.sortKey] > b[this.sortKey];
+        };
+        if (this.sortKey.charAt(0) == "-") {
+          var key = this.sortKey.substring(1);
+          order = (a, b) => {
+            return a[key] < b[key];
+          };
+        }
+        player_list.sort(order);
       }
       return player_list;
     },
@@ -171,7 +188,7 @@ const gameData = () => {
       fate: integerify,
       totalFingers: integerify,
       soul: integerify,
-      peanutAllergy: booleanify,
+      peanutAllergy: peanutAllergify,
       team: teamButtonLabel,
     },
 
@@ -203,6 +220,23 @@ const gameData = () => {
         return [...cats, "bench", "bullpen"];
       }
       return cats;
+    },
+
+    setSortKey(key) {
+      if (this.sortKey != null) {
+        if (
+          this.sortKey.charAt(0) === "-" &&
+          this.sortKey.substring(1) === key
+        ) {
+          this.sortKey = null;
+          return;
+        }
+        if (this.sortKey == key) {
+          this.sortKey = "-" + this.sortKey;
+          return;
+        }
+      }
+      this.sortKey = key;
     },
   };
 };

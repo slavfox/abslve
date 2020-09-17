@@ -72,11 +72,22 @@
                   <tr>
                     <template x-for="field in prettyStlats()" :key="field">
                       <th
-                        x-text="abbrevs[field.name]"
                         :style="`background-color: ${field.color}`"
                         scope="col"
                         :class="{name_header: field.name == 'name', center: true}"
-                      ></th>
+                        @click="setSortKey(field.name)"
+                      >
+                        <span
+                          class="fieldname"
+                          x-text="abbrevs[field.name]"
+                        ></span>
+                        <template x-if="sortKey == field.name">
+                          <span>⬆️</span>
+                        </template>
+                        <template x-if="sortKey == `-${field.name}`">
+                          <span>⬇️</span>
+                        </template>
+                      </th>
                     </template>
                   </tr>
                 </thead>
