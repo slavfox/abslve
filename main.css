@@ -1,0 +1,80 @@
+h1 {
+    text-align: center;
+}
+
+#team-selector {
+    display: inline-grid;
+    padding: 2px 4px;
+}
+
+.team-button {
+    padding: 0 8px;
+    border-radius: 0;
+    margin: 1px;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    max-width: 100%;
+}
+
+#sidebar {
+    flex: 0 1;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.content {
+    overflow: scroll;
+    position: relative;
+    max-width: 100%;
+    max-height: calc(100vf-80px);
+}
+
+table {
+    max-height: 100%;
+    position: relative;
+    border-collapse: collapse;
+}
+
+thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+tbody th {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    border-right: 1px solid #666;
+    background-color: #FFF;
+}
+
+.name_header {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
+
+td, th {
+    text-align: center;
+}
+
+.stlats-table.fk {
+    font-size: 10px;
+}
+.stlats-table.fk td, .stlats-table.fk th {
+    font-size: 10px;
+    padding: initial;
+    line-height: initial;
+    letter-spacing: initial;
+}
+
+
+footer {
+    text-align: center;
+}

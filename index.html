@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>abslve - slavfox.space</title>
+    <!-- CSS Reset -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+
+    <!-- Milligram CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css"
+    />
+    <link rel="stylesheet" href="main.css" />
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      defer
+    ></script>
+    <script src="js/stlats.js"></script>
+    <script src="js/abslve.js"></script>
+  </head>
+  <body>
+    <div x-data="gameData()" x-init="init()" class="container">
+      <div class="row">
+        <div class="column" id="sidebar">
+          <nav id="team-selector" class="">
+            <template x-for="team in [null, ...teams]" :key="team">
+              <button
+                class="button team-button"
+                x-text="teamButtonLabel(team)"
+                x-on:click="activeTeam = team"
+                :style="teamButtonStyle(team)"
+              ></button>
+            </template>
+          </nav>
+        </div>
+        <div class="content column">
+          <div class="stlats">
+            <template x-for="role in activePlayerCategories()">
+              <table
+                :class="{'stlats-table': true, 'fk': forbiddenKnowledge != 'none'}"
+              >
+                <caption x-text="role" class="capitalize"></caption>
+                <colgroup>
+                  <template
+                    x-for="fields in Object.values(stlatCategories())"
+                    :key="fields"
+                  >
+                    <col :span="fields.length" />
+                  </template>
+                </colgroup>
+                <thead>
+                  <tr>
+                    <template
+                      x-for="[category, fields] in Object.entries(stlatCategories())"
+                      :key="category"
+                    >
+                      <th
+                        x-text="category"
+                        :style="`background-color: ${categoryColors[category]}`"
+                        :colspan="fields.length"
+                        scope="colgroup"
+                        class="capitalize"
+                      ></th>
+                    </template>
+                  </tr>
+                  <tr>
+                    <template x-for="field in prettyStlats()" :key="field">
+                      <th
+                        x-text="abbrevs[field.name]"
+                        :style="`background-color: ${field.color}`"
+                        scope="col"
+                        :class="{name_header: field.name == 'name'}"
+                      ></th>
+                    </template>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="player in getPlayers(role)" :key="player">
+                    <tr>
+                      <th :data-label="abbrevs['name']" scope="row">
+                        <a :href="`https://www.blaseball.com/player/${player.id}`" x-text="player.name"></a>
+                      </th>
+                      <template
+                        x-for="[fname, value] in Object.entries(playerStlats(player))"
+                        :key="fname"
+                      >
+                        <td x-text="value" :data-label="abbrevs[fname]"></td>
+                      </template>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </template>
+          </div>
+          <footer>
+            <template x-if="forbiddenKnowledge == 'none'">
+              <div class="fk">
+                <p>
+                  Want that Forbidden Knowledge?
+                  <a :href="mild_fk" @click="forbiddenKnowledge='mild'">
+                    Click here!
+                  </a>
+                </p>
+              </div>
+            </template>
+            <template x-if="forbiddenKnowledge == 'mild'">
+              <div class="fk">
+                <p>
+                  Want to go back to unforbidden knowledge?
+                  <a href="#" @click="forbiddenKnowledge='none'">Click here.</a>
+                </p>
+                <p>
+                  Want the Forbiddest Knowledge?
+                  <a :href="wild_fk" @click="forbiddenKnowledge='wild'">
+                    Click here!
+                  </a>
+                </p>
+              </div>
+            </template>
+            <template x-if="forbiddenKnowledge == 'wild'">
+              <div class="fk">
+                <p>
+                  Want to go back to mild Forbidden Knowledge?
+                  <a :href="mild_fk" @click="forbiddenKnowledge='mild'">
+                    Click here.
+                  </a>
+                </p>
+                <p>
+                  Want to go back to unforbidden knowledge?
+                  <a href="#" @click="forbiddenKnowledge='none'">Click here.</a>
+                </p>
+              </div>
+            </template>
+            <p>
+              © 2020-2020 Slavfox. Not affiliated with The Game Band. Issues?
+              Feature requests? Check out the
+              <a href="https://github.com/slavfox/abslve">GitHub repo</a>.
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
