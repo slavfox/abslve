@@ -65,7 +65,7 @@
                         :style="`background-color: ${categoryColors[category]}`"
                         :colspan="fields.length"
                         scope="colgroup"
-                        class="capitalize"
+                        class="capitalize center"
                       ></th>
                     </template>
                   </tr>
@@ -75,7 +75,7 @@
                         x-text="abbrevs[field.name]"
                         :style="`background-color: ${field.color}`"
                         scope="col"
-                        :class="{name_header: field.name == 'name'}"
+                        :class="{name_header: field.name == 'name', center: true}"
                       ></th>
                     </template>
                   </tr>
@@ -84,13 +84,20 @@
                   <template x-for="player in getPlayers(role)" :key="player">
                     <tr>
                       <th :data-label="abbrevs['name']" scope="row">
-                        <a :href="`https://www.blaseball.com/player/${player.id}`" x-text="player.name"></a>
+                        <a
+                          :href="`https://www.blaseball.com/player/${player.id}`"
+                          x-text="player.name"
+                        ></a>
                       </th>
                       <template
                         x-for="[fname, value] in Object.entries(playerStlats(player))"
                         :key="fname"
                       >
-                        <td x-text="value" :data-label="abbrevs[fname]"></td>
+                        <td
+                          x-text="value"
+                          :data-label="abbrevs[fname]"
+                          :class="{center: centerStats.includes(fname)}"
+                        ></td>
                       </template>
                     </tr>
                   </template>

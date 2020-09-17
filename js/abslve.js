@@ -7,6 +7,8 @@ const categoryColors = {
   extra: "#C7CEEA",
 };
 
+const centerStats = ["name", "fate", "totalFingers", "peanutAllergy", "soul"];
+
 const uncamel = (text) => {
   var result = text.replace(/([A-Z])/g, " $1");
   return result.charAt(0).toUpperCase() + result.slice(1);
@@ -22,11 +24,14 @@ const renderStars = (stars, fk) => {
     var starcount = (stars * 10).toFixed(0) / 2;
     var fullstars = Math.floor(starcount);
     var halfstars = (starcount - fullstars) * 2;
-    for (var i = 0; i < Math.round(fullstars); i++) {
+    for (var i = 0; i < fullstars; i++) {
       value += "🌕 ";
     }
     for (var i = 0; i < Math.round(halfstars); i++) {
       value += "🌗 ";
+    }
+    for (var i = 0; i < Math.round(5 - (fullstars + halfstars)); i++) {
+      value += "🌑 ";
     }
     return value;
   }
@@ -61,16 +66,8 @@ const gameData = () => {
           );
           for (const team of teams) {
             Promise.all([
-              fetchPlayers(
-                [...team.lineup, ...team.bench],
-                true,
-                team
-              ),
-              fetchPlayers(
-                [...team.rotation, ...team.bullpen],
-                false,
-                team
-              ),
+              fetchPlayers([...team.lineup, ...team.bench], true, team),
+              fetchPlayers([...team.rotation, ...team.bullpen], false, team),
             ]).then((values) => {
               for (var player_set of values) {
                 this.players = { ...this.players, ...player_set };
@@ -175,7 +172,7 @@ const gameData = () => {
       totalFingers: integerify,
       soul: integerify,
       peanutAllergy: booleanify,
-      team: teamButtonLabel
+      team: teamButtonLabel,
     },
 
     playerStlats(player) {
