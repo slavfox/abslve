@@ -94,12 +94,12 @@ const url = {
 const mild_fk = "?forbidden-knowledge";
 const wild_fk = "?foreboding-kaleidoscope";
 
-const bad = "#FF9AA2";
-const poor = "#FFB7B2";
-const ok = "#FFDAC1";
-const good = "#E2F0CB";
-const great = "#B5EAD7";
-const wow = "#C7CEEA";
+const bad = "rgba(255, 72, 87, 0.8)";
+const poor = "rgba(255, 102, 91, 0.6)";
+const ok = "rgba(199, 206, 234, 0.2)";
+const good = "rgba(134, 165, 139, 0.4)";
+const great = "rgba(152,218,157, 0.6)";
+const wow = "rgba(116, 216, 180, 1.0)";
 
 const defaultColors = {
   0.2: bad,
