@@ -9,6 +9,21 @@ const categoryColors = {
 
 const centerStats = ["name", "fate", "totalFingers", "peanutAllergy", "soul"];
 
+const colorStlat = (stlat, value) => {
+  if (stlat === "peanutAllergy") {
+    return value ? bad : good;
+  }
+  if (stlat in stlatColors) {
+    const thresholds = Object.keys(stlatColors[stlat]).sort((a, b) => a - b);
+    for (const threshold of thresholds) {
+      if (value < parseFloat(threshold)) {
+        return stlatColors[stlat][threshold];
+      }
+    }
+  }
+  return "rgba(255, 255, 255, 0)";
+};
+
 const uncamel = (text) => {
   var result = text.replace(/([A-Z])/g, " $1");
   return result.charAt(0).toUpperCase() + result.slice(1);
@@ -22,10 +37,17 @@ const peanutAllergify = (val) => {
   return val ? "🤢" : "🥜";
 };
 
-const renderStars = (stars, fk) => {
-  if (fk == "none") {
+const integerify = (n, gameData) => {
+  return n.toFixed(0);
+};
+
+const renderStars = (stars, gameData) => {
+  if (gameData.forbiddenKnowledge === null) {
     var value = " ";
     var starcount = (stars * 10).toFixed(0) / 2;
+    if (!gameData.fullEmojiStars) {
+      return `${starcount}⭐`;
+    }
     var fullstars = Math.floor(starcount);
     var halfstars = (starcount - fullstars) * 2;
     for (var i = 0; i < fullstars; i++) {
@@ -39,29 +61,35 @@ const renderStars = (stars, fk) => {
     }
     return value;
   }
-  return (stars * 10).toFixed(fk == "none" ? 0 : fk == "mild" ? 2 : 4) / 2;
-};
-
-const integerify = (n, fk) => {
-  return n.toFixed(0);
+  return (
+    (stars * 10).toFixed(
+      gameData.forbiddenKnowledge === null
+        ? 0
+        : gameData.forbiddenKnowledge == "mild"
+        ? 2
+        : 4
+    ) / 2
+  );
 };
 
 const gameData = () => {
   return {
     teams: [],
+    teamsByShorthand: { "#allPlayers": null },
     players: {},
     activeTeam: null,
     sortKey: null,
-    forbiddenKnowledge: "none",
+    forbiddenKnowledge: null,
+    fullEmojiStars: true,
     init() {
       this.teams = [];
       this.players = [];
-      if (window.location.hash == mild_fk) {
+      if (window.location.search == mild_fk) {
         this.forbiddenKnowledge = "mild";
-      } else if (window.location.hash == wild_fk) {
+      } else if (window.location.search == wild_fk) {
         this.forbiddenKnowledge = "wild";
       } else {
-        this.forbiddenKnowledge = "none";
+        this.forbiddenKnowledge = null;
       }
       fetch(url.teams)
         .then((response) => response.json())
@@ -70,6 +98,7 @@ const gameData = () => {
             ...teams.sort((a, b) => (a.fullName > b.fullName ? 1 : -1))
           );
           for (const team of teams) {
+            this.teamsByShorthand[`#{team.shorthand}`] = team;
             Promise.all([
               fetchPlayers([...team.lineup, ...team.bench], true, team),
               fetchPlayers([...team.rotation, ...team.bullpen], false, team),
@@ -79,8 +108,29 @@ const gameData = () => {
               }
             });
           }
-          this.activeTeam = this.teams[0];
+          if (window.location.hash in this.teamsByShorthand) {
+            this.activeTeam = this.teamsByShorthand[window.location.hash];
+          } else {
+            this.activeTeam = this.teams[0];
+            window.location.hash = `#${this.activeTeam.shorthand}`;
+          }
         });
+    },
+    setFk(fk) {
+      if (fk == "mild") {
+        var fkSearch = mild_fk;
+      } else if (fk == "wild") {
+        var fkSearch = wild_fk;
+      } else {
+        fk = null;
+        var fkSearch = "";
+      }
+      window.history.pushState(
+        {},
+        "",
+        `${window.location.origin}${window.location.pathname}${fkSearch}${window.location.hash}`
+      );
+      this.forbiddenKnowledge = fk;
     },
     getPlayers(position) {
       var player_list = [];
@@ -142,7 +192,7 @@ const gameData = () => {
         defense: [],
         extra: [],
       };
-      if (this.forbiddenKnowledge == "none") {
+      if (this.forbiddenKnowledge === null) {
         categories = {
           general: ["name", "stars"],
           batting: ["battingStars"],
@@ -199,15 +249,21 @@ const gameData = () => {
           continue;
         }
         if (stlat in this.fieldRenderers) {
-          stlats[stlat] = this.fieldRenderers[stlat](
-            player[stlat],
-            this.forbiddenKnowledge
-          );
+          stlats[stlat] = {
+            value: this.fieldRenderers[stlat](player[stlat], this),
+            color: colorStlat(stlat, player[stlat]),
+          };
         } else {
           if (typeof player[stlat] == "number") {
-            stlats[stlat] = player[stlat].toFixed(4);
+            stlats[stlat] = {
+              value: player[stlat].toFixed(4),
+              color: colorStlat(stlat, player[stlat]),
+            };
           } else {
-            stlats[stlat] = player[stlat];
+            stlats[stlat] = {
+              value: player[stlat],
+              color: colorStlat(stlat, player[stlat]),
+            };
           }
         }
       }

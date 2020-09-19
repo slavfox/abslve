@@ -26,6 +26,7 @@ const stat_categories = {
     "patheticism",
     "thwackability",
     "tragicness",
+    "battingSum",
   ],
   pitching: [
     "pitchingStars",
@@ -36,6 +37,7 @@ const stat_categories = {
     "suppression",
     "unthwackability",
     "totalFingers",
+    "pitchingSum",
   ],
   extra: ["cinnamon", "fate", "peanutAllergy", "pressurization", "soul"],
 };
@@ -48,6 +50,8 @@ const abbrevs = {
   pitchingStars: "⭐",
   defenseStars: "⭐",
   baserunningStars: "⭐",
+  pitchingSum: "🧮",
+  battingSum: "🧮",
   anticapitalism: "anticap",
   baseThirst: "thrst",
   buoyancy: "float",
@@ -87,8 +91,83 @@ const url = {
   teams: url_prefix + "https://blaseball.com/database/allTeams",
 };
 
-const mild_fk = "#forbidden-knowledge";
-const wild_fk = "#foreboding-kaleidoscope";
+const mild_fk = "?forbidden-knowledge";
+const wild_fk = "?foreboding-kaleidoscope";
+
+const bad = "#FF9AA2";
+const poor = "#FFB7B2";
+const ok = "#FFDAC1";
+const good = "#E2F0CB";
+const great = "#B5EAD7";
+const wow = "#C7CEEA";
+
+const defaultColors = {
+  0.2: bad,
+  0.4: poor,
+  0.6: ok,
+  0.8: good,
+  1.0: great,
+  Infinity: wow,
+};
+
+const reverseColors = {
+  0.1: wow,
+  0.2: great,
+  0.4: good,
+  0.8: ok,
+  1.0: poor,
+  Infinity: bad,
+};
+
+const anomalyColors = {
+  "-1.0": bad,
+  "-0.5": poor,
+  0.5: ok,
+  1.0: good,
+  3.0: great,
+  Infinity: wow,
+};
+
+const stlatColors = {
+  stars: defaultColors,
+  battingStars: defaultColors,
+  pitchingStars: defaultColors,
+  baserunningStars: defaultColors,
+  defenseStars: defaultColors,
+  buoyancy: defaultColors,
+  divinity: defaultColors,
+  thirst: defaultColors,
+  martyrdom: defaultColors,
+  moxie: defaultColors,
+  musclitude: defaultColors,
+  patheticism: reverseColors,
+  thwackability: defaultColors,
+  coldness: defaultColors,
+  overpowerment: defaultColors,
+  ruthlessness: defaultColors,
+  shakespearianism: defaultColors,
+  suppression: defaultColors,
+  unthwackability: defaultColors,
+  totalFingers: {
+    10: bad,
+    11: "rgba(255, 255, 255, 0",
+    15: good,
+    Infinity: great,
+  },
+  baseThirst: defaultColors,
+  continuation: defaultColors,
+  groundFriction: defaultColors,
+  indulgence: defaultColors,
+  laserlikeness: defaultColors,
+  anticapitalism: defaultColors,
+  chasiness: defaultColors,
+  omniscience: defaultColors,
+  tenaciousness: defaultColors,
+  watchfulness: defaultColors,
+  tragicness: { 0.1: great, 0.11: "rgba(255, 255, 255, 0)", Infinity: bad },
+  battingSum: anomalyColors,
+  pitchingSum: anomalyColors,
+};
 
 function battingStars(player) {
   return (
@@ -181,6 +260,26 @@ async function fetchPlayers(ids, isBatter, team) {
       new_player.stars = isBatter
         ? new_player.battingStars
         : new_player.pitchingStars;
+
+      new_player.battingSum =
+        (new_player.buoyancy +
+          new_player.divinity +
+          new_player.martyrdom +
+          new_player.moxie +
+          new_player.musclitude +
+          (1 - new_player.patheticism) +
+          new_player.thwackability +
+          (1 - new_player.tragicness) -
+          new_player.battingStars * 9) *
+        new_player.battingStars;
+      new_player.pitchingSum =
+        new_player.coldness +
+        new_player.overpowerment +
+        new_player.ruthlessness +
+        new_player.shakespearianism +
+        new_player.suppression +
+        new_player.unthwackability -
+        new_player.pitchingStars * 6 * new_player.pitchingStars;
 
       players[player.id] = new_player;
     }

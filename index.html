@@ -27,23 +27,27 @@
   <body>
     <div x-data="gameData()" x-init="init()" class="container">
       <div class="row">
-        <div class="column" id="sidebar">
+        <div class="column column-20" id="sidebar">
           <nav id="team-selector" class="">
             <template x-for="team in [null, ...teams]" :key="team">
               <button
                 class="button team-button"
                 x-text="teamButtonLabel(team)"
-                x-on:click="activeTeam = team"
+                x-on:click="activeTeam = team; window.location.hash = `#${team.shorthand}`"
                 :style="teamButtonStyle(team)"
               ></button>
             </template>
           </nav>
         </div>
-        <div class="content column">
+        <div
+          class="column column-80"
+          id="content"
+          x-on:resize.window="fullEmojiStars = window.innerWidth < 1100 ? false : true"
+        >
           <div class="stlats">
             <template x-for="role in activePlayerCategories()">
               <table
-                :class="{'stlats-table': true, 'fk': forbiddenKnowledge != 'none'}"
+                :class="{'stlats-table': true, 'fk': forbiddenKnowledge !== null}"
               >
                 <caption x-text="role" class="capitalize"></caption>
                 <colgroup>
@@ -101,13 +105,14 @@
                         ></a>
                       </th>
                       <template
-                        x-for="[fname, value] in Object.entries(playerStlats(player))"
+                        x-for="[fname, stlat] in Object.entries(playerStlats(player))"
                         :key="fname"
                       >
                         <td
-                          x-text="value"
+                          x-text="stlat.value"
                           :data-label="abbrevs[fname]"
                           :class="{center: centerStats.includes(fname)}"
+                          :style="`background-color: ${stlat.color}`"
                         ></td>
                       </template>
                     </tr>
@@ -116,52 +121,59 @@
               </table>
             </template>
           </div>
-          <footer>
-            <template x-if="forbiddenKnowledge == 'none'">
-              <div class="fk">
-                <p>
-                  Want that Forbidden Knowledge?
-                  <a :href="mild_fk" @click="forbiddenKnowledge='mild'">
-                    Click here!
-                  </a>
-                </p>
-              </div>
-            </template>
-            <template x-if="forbiddenKnowledge == 'mild'">
-              <div class="fk">
-                <p>
-                  Want to go back to unforbidden knowledge?
-                  <a href="#" @click="forbiddenKnowledge='none'">Click here.</a>
-                </p>
-                <p>
-                  Want the Forbiddest Knowledge?
-                  <a :href="wild_fk" @click="forbiddenKnowledge='wild'">
-                    Click here!
-                  </a>
-                </p>
-              </div>
-            </template>
-            <template x-if="forbiddenKnowledge == 'wild'">
-              <div class="fk">
-                <p>
-                  Want to go back to mild Forbidden Knowledge?
-                  <a :href="mild_fk" @click="forbiddenKnowledge='mild'">
-                    Click here.
-                  </a>
-                </p>
-                <p>
-                  Want to go back to unforbidden knowledge?
-                  <a href="#" @click="forbiddenKnowledge='none'">Click here.</a>
-                </p>
-              </div>
-            </template>
-            <p>
-              © 2020-2020 Slavfox. Not affiliated with The Game Band. Issues?
-              Feature requests? Check out the
-              <a href="https://github.com/slavfox/abslve">GitHub repo</a>.
-            </p>
-          </footer>
         </div>
+      </div>
+      <div class="row">
+        <footer class="column column-100">
+          <template x-if="forbiddenKnowledge === null">
+            <div class="fk">
+              <p>
+                Want that Forbidden Knowledge?
+                <a :href="window.location.hash || '#'" @click="setFk('mild')">
+                  Click here!
+                </a>
+              </p>
+            </div>
+          </template>
+          <template x-if="forbiddenKnowledge == 'mild'">
+            <div class="fk">
+              <p>
+                Want to go back to unforbidden knowledge?
+                <a :href="window.location.hash || '#'" @click="setFk(null)"
+                  >Click here.</a
+                >
+              </p>
+            </div>
+          </template>
+          <template x-if="forbiddenKnowledge == 'wild'">
+            <div class="fk">
+              <p>
+                Want to go back to mild Forbidden Knowledge?
+                <a
+                  :href="window.location.hash || '#'"
+                  :href="#`${activeTeam.shorthand}"
+                  @click="setFk('mild')"
+                >
+                  Click here.
+                </a>
+              </p>
+              <p>
+                Want to go back to unforbidden knowledge?
+                <a
+                  :href="window.location.hash || '#'"
+                  :href="#`${activeTeam.shorthand}"
+                  @click="setFk(null)"
+                  >Click here.</a
+                >
+              </p>
+            </div>
+          </template>
+          <p>
+            © 2020-2020 Slavfox. Not affiliated with The Game Band. Issues?
+            Feature requests? Check out the
+            <a href="https://github.com/slavfox/abslve">GitHub repo</a>.
+          </p>
+        </footer>
       </div>
     </div>
   </body>

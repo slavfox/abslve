@@ -14,24 +14,34 @@ h1 {
 }
 
 .container {
-  display: flex;
-  height: 100vh;
   max-width: 100%;
 }
 
-#sidebar {
-  flex: 0 1;
+#team-selector {
+  width: 100%;
+  position: sticky;
+  top: 2rem;
+}
+
+@media (max-width: 40rem) {
+  #sidebar {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 .capitalize {
   text-transform: capitalize;
 }
 
-.content {
-  overflow: scroll;
-  position: relative;
+@media (max-width: 40rem) {
+  #content {
+    max-width: 100%;
+  }
+}
+
+#content {
   max-width: 100%;
-  max-height: calc(100vf-80px);
 }
 
 table {
@@ -40,7 +50,7 @@ table {
   border-collapse: collapse;
 }
 
-thead th {
+*/ thead th {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
@@ -62,6 +72,12 @@ tbody th {
 
 .center {
   text-align: center;
+}
+
+td,
+th {
+  padding: 0.2rem 0.5rem;
+  border-left: 0.2rem solid #a1a1a1;
 }
 
 .stlats-table.fk {
