@@ -98,7 +98,7 @@ const gameData = () => {
             ...teams.sort((a, b) => (a.fullName > b.fullName ? 1 : -1))
           );
           for (const team of teams) {
-            this.teamsByShorthand[`#{team.shorthand}`] = team;
+            this.teamsByShorthand[`#${team.shorthand}`] = team;
             Promise.all([
               fetchPlayers([...team.lineup, ...team.bench], true, team),
               fetchPlayers([...team.rotation, ...team.bullpen], false, team),
