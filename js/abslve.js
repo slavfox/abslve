@@ -242,32 +242,71 @@ const gameData = () => {
       team: teamButtonLabel,
     },
 
+    renderStlat(stlat, value) {
+      if (stlat in this.fieldRenderers) {
+        return this.fieldRenderers[stlat](value, this);
+      } else if (typeof value == "number") {
+        return value.toFixed(4);
+      } else {
+        return value;
+      }
+    },
+
     playerStlats(player) {
       const stlats = {};
       for (stlat of this.stlatFields()) {
         if (stlat === "name") {
           continue;
         }
-        if (stlat in this.fieldRenderers) {
-          stlats[stlat] = {
-            value: this.fieldRenderers[stlat](player[stlat], this),
-            color: colorStlat(stlat, player[stlat]),
-          };
-        } else {
-          if (typeof player[stlat] == "number") {
-            stlats[stlat] = {
-              value: player[stlat].toFixed(4),
-              color: colorStlat(stlat, player[stlat]),
-            };
-          } else {
-            stlats[stlat] = {
-              value: player[stlat],
-              color: colorStlat(stlat, player[stlat]),
-            };
-          }
-        }
+        stlats[stlat] = {
+          value: this.renderStlat(stlat, player[stlat]),
+          color: colorStlat(stlat, player[stlat]),
+        };
       }
       return stlats;
+    },
+
+    starTotals(position) {
+      var starTotals = [];
+      for ([category, stlats] of Object.entries(this.stlatCategories())) {
+        if (category === "general") {
+          starTotals.push({
+            name: "general",
+            value: "Star totals",
+            color: null,
+            colspan: stlats.length,
+          });
+          continue;
+        }
+        var sum = 0;
+        var count = 0;
+        var stars = `${category}Stars`;
+        if (stlats.includes(stars)) {
+          for (id of this.activeTeam[position]) {
+            if (id in this.players) {
+              sum += this.players[id][stars];
+              count += 1;
+            }
+          }
+          starTotals.push({
+            name: stars,
+            value:
+              this.forbiddenKnowledge === null
+                ? (sum * 10).toFixed(0) / 2
+                : (sum * 10).toFixed(4) / 2,
+            color: colorStlat(stars, sum / count),
+            colspan: stlats.length,
+          });
+        } else {
+          starTotals.push({
+            name: null,
+            value: null,
+            color: null,
+            colspan: stlats.length,
+          });
+        }
+      }
+      return starTotals;
     },
 
     activePlayerCategories() {

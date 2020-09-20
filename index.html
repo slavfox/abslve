@@ -117,6 +117,18 @@
                       </template>
                     </tr>
                   </template>
+                  <template x-if="activeTeam !== null">
+                    <tr>
+                      <template x-for="cell in starTotals(role)" :key="cell">
+                        <td
+                          x-text="cell.value"
+                          :data-label="cell.name"
+                          :colspan="cell.colspan"
+                          :style="`background-color: ${cell.color}`"
+                        ></td>
+                      </template>
+                    </tr>
+                  </template>
                 </tbody>
               </table>
             </template>

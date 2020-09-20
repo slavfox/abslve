@@ -96,8 +96,8 @@ const wild_fk = "?foreboding-kaleidoscope";
 
 const bad = "rgba(255, 72, 87, 0.8)";
 const poor = "rgba(255, 102, 91, 0.6)";
-const ok = "rgba(199, 206, 234, 0.2)";
-const good = "rgba(134, 165, 139, 0.4)";
+const ok = "rgba(255, 255, 255, 0.0)";
+const good = "rgba(134, 165, 139, 0.25)";
 const great = "rgba(152,218,157, 0.6)";
 const wow = "rgba(116, 216, 180, 1.0)";
 
