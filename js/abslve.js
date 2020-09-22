@@ -10,6 +10,9 @@ const categoryColors = {
 const centerStats = ["name", "fate", "totalFingers", "peanutAllergy", "soul"];
 
 const colorStlat = (stlat, value) => {
+  if (value === null) {
+    return "rgba(255, 255, 255, 0)";
+  }
   if (stlat === "peanutAllergy") {
     return value ? bad : good;
   }
@@ -30,14 +33,23 @@ const uncamel = (text) => {
 };
 
 const booleanify = (val) => {
+  if (val === null) {
+    return "❓";
+  }
   return val ? "⭕" : "❌";
 };
 
 const peanutAllergify = (val) => {
+  if (val === null) {
+    return "❓";
+  }
   return val ? "🤢" : "🥜";
 };
 
 const integerify = (n, gameData) => {
+  if (n === null) {
+    return "❓";
+  }
   return n.toFixed(0);
 };
 
@@ -84,6 +96,7 @@ const gameData = () => {
     init() {
       this.teams = [];
       this.players = [];
+      this.hof = null;
       if (window.location.search == mild_fk) {
         this.forbiddenKnowledge = "mild";
       } else if (window.location.search == wild_fk) {
@@ -115,6 +128,24 @@ const gameData = () => {
             window.location.hash = `#${this.activeTeam.shorthand}`;
           }
         });
+      fetch(url.tribute)
+        .then((response) => response.json())
+        .then((players) => {
+          var hof_players = players.map((player) => player.playerId);
+          var hof = {
+            fullName: "Hall of Flame",
+            shorthand: "HOF",
+            emoji: "0x1F480",
+            mainColor: "#5988ff",
+            secondaryColor: "#000",
+            players: hof_players,
+          };
+          fetchPlayers(hof_players, true, hof).then((player_set) => {
+            this.players = { ...this.players, ...player_set };
+          });
+          this.teamsByShorthand["#HOF"] = hof;
+          this.hof = hof;
+        });
     },
     setFk(fk) {
       if (fk == "mild") {
@@ -140,6 +171,12 @@ const gameData = () => {
             if (id in this.players) {
               player_list.push(this.players[id]);
             }
+          }
+        }
+      } else if (this.activeTeam === this.hof) {
+        for (id of this.hof.players) {
+          if (id in this.players) {
+            player_list.push(this.players[id]);
           }
         }
       } else {
@@ -310,11 +347,15 @@ const gameData = () => {
     },
 
     activePlayerCategories() {
-      var cats = ["lineup", "rotation"];
-      if (this.forbiddenKnowledge == "wild") {
-        return [...cats, "bench", "bullpen"];
+      if (this.activeTeam === this.hof) {
+        return ["players"];
+      } else {
+        var cats = ["lineup", "rotation"];
+        if (this.forbiddenKnowledge == "wild") {
+          return [...cats, "bench", "bullpen"];
+        }
+        return cats;
       }
-      return cats;
     },
 
     setSortKey(key) {
@@ -332,6 +373,30 @@ const gameData = () => {
         }
       }
       this.sortKey = key;
+    },
+
+    downloadCsv() {
+      var headers = [];
+      for (category of Object.values(this.stlatCategories())) {
+        headers = [...headers, ...category];
+      }
+      var rows = [headers];
+      for (position of this.activePlayerCategories()) {
+        var players = this.getPlayers(position);
+        for (player of players) {
+          var stlats = headers.map((stlatName) => {
+            if (stlatName === "team") {
+              return player.team.shorthand;
+            }
+            return player[stlatName];
+          });
+          rows.push(stlats);
+        }
+      }
+      var csvContent =
+        "data:text/csv;charset=utf-8," +
+        rows.map((e) => e.join(",")).join("\n");
+      window.open(encodeURI(csvContent));
     },
   };
 };

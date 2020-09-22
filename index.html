@@ -29,7 +29,7 @@
       <div class="row">
         <div class="column column-20" id="sidebar">
           <nav id="team-selector" class="">
-            <template x-for="team in [null, ...teams]" :key="team">
+            <template x-for="team in [null, ...teams, hof]" :key="team">
               <button
                 class="button team-button"
                 x-text="teamButtonLabel(team)"
@@ -44,6 +44,20 @@
           id="content"
           x-on:resize.window="fullEmojiStars = window.innerWidth < 1100 ? false : true"
         >
+          <template x-if="forbiddenKnowledge !== null">
+            <button x-on:click="downloadCsv()" class="float-right">
+              Download as .CSV
+            </button>
+          </template>
+          <template x-if="activeTeam === null">
+            <h1 id="teamname">⚾ All players ⚾</h1>
+          </template>
+          <template x-if="activeTeam !== null">
+            <h1
+              x-text="`${teamEmoji(activeTeam)} ${activeTeam.fullName} ${teamEmoji(activeTeam)}`"
+              id="teamname"
+            ></h1>
+          </template>
           <div class="stlats">
             <template x-for="role in activePlayerCategories()">
               <table
