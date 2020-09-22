@@ -188,12 +188,12 @@ const gameData = () => {
       }
       if (this.sortKey != null) {
         var order = (a, b) => {
-          return a[this.sortKey] > b[this.sortKey];
+          return a[this.sortKey] > b[this.sortKey] ? 1 : -1;
         };
         if (this.sortKey.charAt(0) == "-") {
           var key = this.sortKey.substring(1);
           order = (a, b) => {
-            return a[key] < b[key];
+            return a[key] < b[key] ? 1 : -1;
           };
         }
         player_list.sort(order);
