@@ -100,7 +100,10 @@ const gameData = () => {
         this.currentColorSet = colorSets[localStorageColorset];
       }
       const localStorageUseEmoji = localStorage.getItem("colorSet");
-      if (localStorageUseEmoji === "true" || localStorageUseEmoji === "false") {
+      if (
+        localStorageUseEmoji === "true" ||
+        localStorageUseEmoji === "false"
+      ) {
         this.useEmoji = localStorageUseEmoji == "true";
       }
       if (window.location.search == mild_fk) {
@@ -122,9 +125,11 @@ const gameData = () => {
               fetchPlayers([...team.lineup, ...team.bench], true, team),
               fetchPlayers([...team.rotation, ...team.bullpen], false, team),
             ]).then((values) => {
+              var newPlayers = {};
               for (var player_set of values) {
-                this.players = { ...this.players, ...player_set };
+                newPlayers = Object.assign(newPlayers, player_set);
               }
+              this.players = Object.assign(newPlayers, this.players);
             });
           }
           if (window.location.hash in this.teamsByShorthand) {
@@ -147,7 +152,7 @@ const gameData = () => {
             players: hof_players,
           };
           fetchPlayers(hof_players, true, hof).then((player_set) => {
-            this.players = { ...this.players, ...player_set };
+            Object.assign(this.players, player_set);
           });
           this.teamsByShorthand["#HOF"] = hof;
           this.hof = hof;
@@ -274,7 +279,9 @@ const gameData = () => {
 
     prettyStlats() {
       var result = [];
-      for (const [category, stlats] of Object.entries(this.stlatCategories())) {
+      for (const [category, stlats] of Object.entries(
+        this.stlatCategories()
+      )) {
         for (stlat of stlats) {
           result.push({ name: stlat, color: this.categoryColor(category) });
         }

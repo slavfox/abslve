@@ -104,6 +104,11 @@ tr:hover {
   width: initial;
 }
 
+.color-preview {
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
 footer {
   text-align: center;
 }

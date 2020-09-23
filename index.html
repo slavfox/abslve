@@ -150,9 +150,43 @@
           </div>
           <div class="row">
             <div class="column column-100">
-              <template x-if="forbiddenKnowledge !== null">
-                <button x-on:click="downloadCsv()">Download as .CSV</button>
-              </template>
+              <p>
+                <template x-if="forbiddenKnowledge !== null">
+                  <button x-on:click="downloadCsv()">Download as .CSV</button>
+                </template>
+              </p>
+              <p>
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['bad'].slice(0, -1), 0.5)}`"
+                  >Terrible</span
+                >
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['poor'].slice(0, -1), 0.5)}`"
+                  >Poor</span
+                >
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['ok'].slice(0, -1), 0.5)}`"
+                  >Ok</span
+                >
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['good'].slice(0, -1), 0.5)}`"
+                  >Good</span
+                >
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['great'].slice(0, -1), 0.5)}`"
+                  >Great</span
+                >
+                <span
+                  class="color-preview"
+                  :style="`background-color: ${rgba_to_color(...currentColorSet['wow'].slice(0, -1), 0.5)}`"
+                  >Exceptional</span
+                >
+              </p>
               <label for="colorset-selector"
                 >Choose an alternate color scheme:</label
               >
@@ -189,6 +223,13 @@
                 <a :href="window.location.hash || '#'" @click="setFk(null)"
                   >Click here.</a
                 >
+              </p>
+              <p>
+                Want to go to the Forbiddest Knowledge and gaze into the
+                Shadows?
+                <a :href="window.location.hash || '#'" @click="setFk('wild')">
+                  Click here!
+                </a>
               </p>
             </div>
           </template>
