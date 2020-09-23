@@ -33,7 +33,7 @@
               <button
                 class="button team-button"
                 x-text="teamButtonLabel(team)"
-                x-on:click="activeTeam = team; window.location.hash = `#${team.shorthand}`"
+                x-on:click="activeTeam = team; window.location.hash = `#${team === null ? 'allPlayers' : team.shorthand}`"
                 :style="teamButtonStyle(team)"
               ></button>
             </template>
@@ -44,108 +44,129 @@
           id="content"
           x-on:resize.window="fullEmojiStars = window.innerWidth < 1100 ? false : true"
         >
-          <template x-if="forbiddenKnowledge !== null">
-            <button x-on:click="downloadCsv()" class="float-right">
-              Download as .CSV
-            </button>
-          </template>
-          <template x-if="activeTeam === null">
-            <h1 id="teamname">⚾ All players ⚾</h1>
-          </template>
-          <template x-if="activeTeam !== null">
-            <h1
-              x-text="`${teamEmoji(activeTeam)} ${activeTeam.fullName} ${teamEmoji(activeTeam)}`"
-              id="teamname"
-            ></h1>
-          </template>
-          <div class="stlats">
-            <template x-for="role in activePlayerCategories()">
-              <table
-                :class="{'stlats-table': true, 'fk': forbiddenKnowledge !== null}"
-              >
-                <caption x-text="role" class="capitalize"></caption>
-                <colgroup>
-                  <template
-                    x-for="fields in Object.values(stlatCategories())"
-                    :key="fields"
-                  >
-                    <col :span="fields.length" />
-                  </template>
-                </colgroup>
-                <thead>
-                  <tr>
+          <div class="row">
+            <div class="column column-100">
+              <template x-if="activeTeam === null">
+                <h1 id="teamname">⚾ All players ⚾</h1>
+              </template>
+              <template x-if="activeTeam !== null">
+                <h1
+                  x-text="`${teamEmoji(activeTeam)} ${activeTeam.fullName} ${teamEmoji(activeTeam)}`"
+                  id="teamname"
+                ></h1>
+              </template>
+            </div>
+          </div>
+          <div class="row">
+            <div class="stlats">
+              <template x-for="role in activePlayerCategories()">
+                <table
+                  :class="{'stlats-table': true, 'fk': forbiddenKnowledge !== null}"
+                >
+                  <caption x-text="role" class="capitalize"></caption>
+                  <colgroup>
                     <template
-                      x-for="[category, fields] in Object.entries(stlatCategories())"
-                      :key="category"
+                      x-for="fields in Object.values(stlatCategories())"
+                      :key="fields"
                     >
-                      <th
-                        x-text="category"
-                        :style="`background-color: ${categoryColors[category]}`"
-                        :colspan="fields.length"
-                        scope="colgroup"
-                        class="capitalize center"
-                      ></th>
+                      <col :span="fields.length" />
                     </template>
-                  </tr>
-                  <tr>
-                    <template x-for="field in prettyStlats()" :key="field">
-                      <th
-                        :style="`background-color: ${field.color}`"
-                        scope="col"
-                        :class="{name_header: field.name == 'name', center: true}"
-                        @click="setSortKey(field.name)"
-                      >
-                        <span
-                          class="fieldname"
-                          x-text="abbrevs[field.name]"
-                        ></span>
-                        <template x-if="sortKey == field.name">
-                          <span>⬆️</span>
-                        </template>
-                        <template x-if="sortKey == `-${field.name}`">
-                          <span>⬇️</span>
-                        </template>
-                      </th>
-                    </template>
-                  </tr>
-                </thead>
-                <tbody>
-                  <template x-for="player in getPlayers(role)" :key="player">
+                  </colgroup>
+                  <thead>
                     <tr>
-                      <th :data-label="abbrevs['name']" scope="row">
-                        <a
-                          :href="`https://www.blaseball.com/player/${player.id}`"
-                          x-text="player.name"
-                        ></a>
-                      </th>
                       <template
-                        x-for="[fname, stlat] in Object.entries(playerStlats(player))"
-                        :key="fname"
+                        x-for="[category, fields] in Object.entries(stlatCategories())"
+                        :key="category"
                       >
-                        <td
-                          x-text="stlat.value"
-                          :data-label="abbrevs[fname]"
-                          :class="{center: centerStats.includes(fname)}"
-                          :style="`background-color: ${stlat.color}`"
-                        ></td>
+                        <th
+                          x-text="category"
+                          :style="`background-color: ${categoryColor(category)}`"
+                          :colspan="fields.length"
+                          scope="colgroup"
+                          class="capitalize center"
+                        ></th>
                       </template>
                     </tr>
-                  </template>
-                  <template x-if="activeTeam !== null">
                     <tr>
-                      <template x-for="cell in starTotals(role)" :key="cell">
-                        <td
-                          x-text="cell.value"
-                          :data-label="cell.name"
-                          :colspan="cell.colspan"
-                          :style="`background-color: ${cell.color}`"
-                        ></td>
+                      <template x-for="field in prettyStlats()" :key="field">
+                        <th
+                          :style="`background-color: ${field.color}`"
+                          scope="col"
+                          :class="{name_header: field.name == 'name', center: true}"
+                          @click="setSortKey(field.name)"
+                        >
+                          <span
+                            class="fieldname"
+                            x-text="abbrevs[field.name]"
+                          ></span>
+                          <template x-if="sortKey == field.name">
+                            <span>⬆️</span>
+                          </template>
+                          <template x-if="sortKey == `-${field.name}`">
+                            <span>⬇️</span>
+                          </template>
+                        </th>
                       </template>
                     </tr>
-                  </template>
-                </tbody>
-              </table>
-            </template>
+                  </thead>
+                  <tbody>
+                    <template x-for="player in getPlayers(role)" :key="player">
+                      <tr>
+                        <th :data-label="abbrevs['name']" scope="row">
+                          <a
+                            :href="`https://www.blaseball.com/player/${player.id}`"
+                            x-text="player.name"
+                          ></a>
+                        </th>
+                        <template
+                          x-for="[fname, stlat] in Object.entries(playerStlats(player))"
+                          :key="fname"
+                        >
+                          <td
+                            x-text="stlat.value"
+                            :data-label="abbrevs[fname]"
+                            :class="{center: centerStats.includes(fname)}"
+                            :style="`background-color: ${stlat.color}; `"
+                          ></td>
+                        </template>
+                      </tr>
+                    </template>
+                    <template x-if="activeTeam !== null">
+                      <tr>
+                        <template x-for="cell in starTotals(role)" :key="cell">
+                          <td
+                            x-text="cell.value"
+                            :data-label="cell.name"
+                            :colspan="cell.colspan"
+                            :style="`background-color: ${cell.color}`"
+                          ></td>
+                        </template>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </template>
+            </div>
+          </div>
+          <div class="row">
+            <div class="column column-100">
+              <template x-if="forbiddenKnowledge !== null">
+                <button x-on:click="downloadCsv()">Download as .CSV</button>
+              </template>
+              <label for="colorset-selector"
+                >Choose an alternate color scheme:</label
+              >
+              <select
+                name="colorSet"
+                id="colorset-selector"
+                @change="updateColorSet()"
+                x-model="selectedColorSetName"
+              >
+                <template x-for="set in Object.keys(colorSets)">
+                  <option :value="set" x-text="set"></option>
+                </template>
+              </select>
+            </div>
           </div>
         </div>
       </div>

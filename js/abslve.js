@@ -1,31 +1,13 @@
 const categoryColors = {
-  general: "#FF9AA2",
-  batting: "#FFB7B2",
-  pitching: "#FFDAC1",
-  baserunning: "#E2F0CB",
-  defense: "#B5EAD7",
-  extra: "#C7CEEA",
+  general: "bad",
+  batting: "poor",
+  pitching: "ok",
+  baserunning: "good",
+  defense: "great",
+  extra: "wow",
 };
 
 const centerStats = ["name", "fate", "totalFingers", "peanutAllergy", "soul"];
-
-const colorStlat = (stlat, value) => {
-  if (value === null) {
-    return "rgba(255, 255, 255, 0)";
-  }
-  if (stlat === "peanutAllergy") {
-    return value ? bad : good;
-  }
-  if (stlat in stlatColors) {
-    const thresholds = Object.keys(stlatColors[stlat]).sort((a, b) => a - b);
-    for (const threshold of thresholds) {
-      if (value < parseFloat(threshold)) {
-        return stlatColors[stlat][threshold];
-      }
-    }
-  }
-  return "rgba(255, 255, 255, 0)";
-};
 
 const uncamel = (text) => {
   var result = text.replace(/([A-Z])/g, " $1");
@@ -51,6 +33,10 @@ const integerify = (n, gameData) => {
     return "❓";
   }
   return n.toFixed(0);
+};
+
+const rgba_to_color = (r, g, b, a) => {
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
 
 const renderStars = (stars, gameData) => {
@@ -84,6 +70,14 @@ const renderStars = (stars, gameData) => {
   );
 };
 
+const alpha = (color, alpha) => {
+  var distance = 255 - color;
+  if (distance === 0) {
+    return 255;
+  }
+  return (255 - alpha * distance).toFixed(0);
+};
+
 const gameData = () => {
   return {
     teams: [],
@@ -93,10 +87,22 @@ const gameData = () => {
     sortKey: null,
     forbiddenKnowledge: null,
     fullEmojiStars: true,
+    currentColorSet: colorSets.Default,
+    selectedColorSetName: "Default",
+    useEmoji: true,
     init() {
       this.teams = [];
       this.players = [];
       this.hof = null;
+      const localStorageColorset = localStorage.getItem("colorSet");
+      if (localStorageColorset && localStorageColorset in colorSets) {
+        this.selectedColorSetName = localStorageColorset;
+        this.currentColorSet = colorSets[localStorageColorset];
+      }
+      const localStorageUseEmoji = localStorage.getItem("colorSet");
+      if (localStorageUseEmoji === "true" || localStorageUseEmoji === "false") {
+        this.useEmoji = localStorageUseEmoji == "true";
+      }
       if (window.location.search == mild_fk) {
         this.forbiddenKnowledge = "mild";
       } else if (window.location.search == wild_fk) {
@@ -147,6 +153,11 @@ const gameData = () => {
           this.hof = hof;
         });
     },
+
+    updateColorSet() {
+      localStorage.setItem("colorSet", this.selectedColorSetName);
+      this.currentColorSet = colorSets[this.selectedColorSetName];
+    },
     setFk(fk) {
       if (fk == "mild") {
         var fkSearch = mild_fk;
@@ -162,6 +173,15 @@ const gameData = () => {
         `${window.location.origin}${window.location.pathname}${fkSearch}${window.location.hash}`
       );
       this.forbiddenKnowledge = fk;
+    },
+    categoryColor(category) {
+      var color = this.currentColorSet[categoryColors[category]];
+      return rgba_to_color(
+        alpha(color[0], 0.6),
+        alpha(color[1], 0.6),
+        alpha(color[2], 0.6),
+        1.0
+      );
     },
     getPlayers(position) {
       var player_list = [];
@@ -256,7 +276,7 @@ const gameData = () => {
       var result = [];
       for (const [category, stlats] of Object.entries(this.stlatCategories())) {
         for (stlat of stlats) {
-          result.push({ name: stlat, color: categoryColors[category] });
+          result.push({ name: stlat, color: this.categoryColor(category) });
         }
       }
       return result;
@@ -297,7 +317,7 @@ const gameData = () => {
         }
         stlats[stlat] = {
           value: this.renderStlat(stlat, player[stlat]),
-          color: colorStlat(stlat, player[stlat]),
+          color: this.colorStlat(stlat, player[stlat]),
         };
       }
       return stlats;
@@ -331,7 +351,7 @@ const gameData = () => {
               this.forbiddenKnowledge === null
                 ? (sum * 10).toFixed(0) / 2
                 : (sum * 10).toFixed(4) / 2,
-            color: colorStlat(stars, sum / count),
+            color: this.colorStlat(stars, sum / count),
             colspan: stlats.length,
           });
         } else {
@@ -397,6 +417,28 @@ const gameData = () => {
         "data:text/csv;charset=utf-8," +
         rows.map((e) => e.join(",")).join("\n");
       window.open(encodeURI(csvContent));
+    },
+    colorStlat(stlat, value) {
+      if (value === null) {
+        return "rgba(255, 255, 255, 0)";
+      }
+      if (stlat === "peanutAllergy") {
+        return rgba_to_color(
+          ...(value ? this.currentColorSet.bad : this.currentColorSet.good)
+        );
+      }
+      if (stlat in stlatColors) {
+        const thresholds = Object.keys(stlatColors[stlat]).sort(
+          (a, b) => a - b
+        );
+        for (const threshold of thresholds) {
+          if (value < parseFloat(threshold)) {
+            var color = stlatColors[stlat][threshold];
+            return rgba_to_color(...this.currentColorSet[color]);
+          }
+        }
+      }
+      return "rgba(255, 255, 255, 0)";
     },
   };
 };

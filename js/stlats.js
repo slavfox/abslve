@@ -95,38 +95,62 @@ const url = {
 const mild_fk = "?forbidden-knowledge";
 const wild_fk = "?foreboding-kaleidoscope";
 
-const bad = "rgba(255, 72, 87, 0.8)";
-const poor = "rgba(255, 102, 91, 0.6)";
-const ok = "rgba(255, 255, 255, 0.0)";
-const good = "rgba(134, 165, 139, 0.25)";
-const great = "rgba(152,218,157, 0.6)";
-const wow = "rgba(116, 216, 180, 1.0)";
+const colorSets = {
+  Default: {
+    bad: [255, 72, 87, 0.8],
+    poor: [255, 102, 91, 0.6],
+    ok: [255, 218, 193, 0.8],
+    good: [226, 240, 203, 0.25],
+    great: [152, 238, 157, 0.5],
+    wow: [116, 216, 180, 1.0],
+    none: [255, 255, 255, 0.0],
+  },
+  Moon: {
+    wow: [84, 39, 136, 1.0],
+    great: [153, 142, 195, 0.6],
+    good: [216, 218, 235, 0.6],
+    ok: [254, 224, 182, 0.6],
+    poor: [241, 163, 64, 1.0],
+    bad: [179, 88, 6, 0.8],
+    none: [255, 255, 255, 0.0],
+  },
+};
+
+const colors = {
+  bad: "bad",
+  poor: "poor",
+  ok: "ok",
+  good: "good",
+  great: "great",
+  wow: "wow",
+  none: "none",
+};
 
 const defaultColors = {
-  0.2: bad,
-  0.4: poor,
-  0.6: ok,
-  0.8: good,
-  1.0: great,
-  Infinity: wow,
+  0.125: colors.bad,
+  0.35: colors.poor,
+  0.45: colors.ok,
+  0.75: colors.good,
+  1.0: colors.great,
+  Infinity: colors.wow,
 };
 
 const reverseColors = {
-  0.1: wow,
-  0.2: great,
-  0.4: good,
-  0.8: ok,
-  1.0: poor,
-  Infinity: bad,
+  0.1: colors.wow,
+  0.2: colors.great,
+  0.4: colors.good,
+  0.8: colors.ok,
+  1.0: colors.poor,
+  Infinity: colors.bad,
 };
 
 const anomalyColors = {
-  "-1.0": bad,
-  "-0.5": poor,
-  0.5: ok,
-  1.0: good,
-  3.0: great,
-  Infinity: wow,
+  "-1.0": colors.bad,
+  "-0.5": colors.poor,
+  0.5: colors.ok,
+  1.0: colors.good,
+  3.0: colors.great,
+  Infinity: colors.wow,
 };
 
 const stlatColors = {
@@ -150,10 +174,11 @@ const stlatColors = {
   suppression: defaultColors,
   unthwackability: defaultColors,
   totalFingers: {
-    10: bad,
-    11: "rgba(255, 255, 255, 0",
-    15: good,
-    Infinity: great,
+    10: colors.bad,
+    11: colors.ok,
+    13: colors.good,
+    15: colors.great,
+    Infinity: colors.wow,
   },
   baseThirst: defaultColors,
   continuation: defaultColors,
@@ -165,7 +190,7 @@ const stlatColors = {
   omniscience: defaultColors,
   tenaciousness: defaultColors,
   watchfulness: defaultColors,
-  tragicness: { 0.1: great, 0.11: "rgba(255, 255, 255, 0)", Infinity: bad },
+  tragicness: { 0.1: colors.great, 0.11: colors.ok, Infinity: colors.bad },
   battingSum: anomalyColors,
   pitchingSum: anomalyColors,
 };
@@ -242,13 +267,21 @@ function bump_baserunning(player, modifier) {
   player.laserlikeness = Math.max(player.laserlikeness + modifier, 0.1);
 }
 
+function getBattingBaseStat(battingStars) {
+  return Math.pow(battingStars, 0.92);
+}
+
+function getPitchingBaseStat(pitchingStars) {
+  return 1.0262 * Math.pow(pitchingStars, 100 / 87);
+}
+
 async function fetchPlayers(ids, isBatter, team) {
   try {
     const response = await fetch(url.players + ids.join(","));
     const response_data = await response.json();
     var players = {};
     for (var player of response_data) {
-      var new_player = {
+      var newPlayer = {
         ...player,
         batter: isBatter,
         battingStars: battingStars(player),
@@ -258,31 +291,32 @@ async function fetchPlayers(ids, isBatter, team) {
         team: team,
       };
 
-      new_player.stars = isBatter
-        ? new_player.battingStars
-        : new_player.pitchingStars;
+      newPlayer.stars = isBatter
+        ? newPlayer.battingStars
+        : newPlayer.pitchingStars;
 
-      new_player.battingSum =
-        (new_player.buoyancy +
-          new_player.divinity +
-          new_player.martyrdom +
-          new_player.moxie +
-          new_player.musclitude +
-          (1 - new_player.patheticism) +
-          new_player.thwackability +
-          (1 - new_player.tragicness) -
-          new_player.battingStars * 9) *
-        new_player.battingStars;
-      new_player.pitchingSum =
-        new_player.coldness +
-        new_player.overpowerment +
-        new_player.ruthlessness +
-        new_player.shakespearianism +
-        new_player.suppression +
-        new_player.unthwackability -
-        new_player.pitchingStars * 6 * new_player.pitchingStars;
+      var battingBaseStat = getBattingBaseStat(newPlayer.battingStars);
+      newPlayer.battingSum =
+        newPlayer.buoyancy +
+        newPlayer.divinity +
+        newPlayer.moxie +
+        newPlayer.musclitude -
+        newPlayer.patheticism +
+        newPlayer.thwackability +
+        0.1 -
+        (battingBaseStat * 5 + 0.1);
 
-      players[player.id] = new_player;
+      var pitchingBaseStat = getPitchingBaseStat(newPlayer.pitchingStars);
+      newPlayer.pitchingSum =
+        newPlayer.coldness +
+        newPlayer.overpowerment +
+        newPlayer.ruthlessness +
+        newPlayer.shakespearianism +
+        newPlayer.suppression +
+        newPlayer.unthwackability -
+        pitchingBaseStat * 6;
+
+      players[player.id] = newPlayer;
     }
     return players;
   } catch (e) {

@@ -51,10 +51,11 @@ table {
   border-collapse: collapse;
 }
 
-*/ thead th {
+thead tr:nth-child(2) th {
   position: -webkit-sticky;
   position: sticky;
   top: 0;
+  z-index: 2;
 }
 
 tbody th {
@@ -62,27 +63,27 @@ tbody th {
   position: sticky;
   left: 0px;
   border-right: 1px solid #666;
-  background-color: rgba(255, 255, 255, 0.75);
-}
-
-.name_header {
-  position: sticky;
-  left: 0px;
-  z-index: 1;
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .center {
   text-align: center;
 }
 
+.stlats {
+  text-align: center;
+  margin: 0 auto;
+}
+
 td,
 th {
-  padding: 0.2rem 0.5rem;
+  padding: 0.5rem 0.8rem;
   border-left: 0.2rem solid #a1a1a1;
+  white-space: nowrap;
 }
 
 tr:nth-child(even) th {
-  background-color: rgba(230, 230, 230, 0.75);
+  background-color: rgba(230, 230, 230, 1);
 }
 
 tr:hover {
@@ -90,14 +91,17 @@ tr:hover {
 }
 
 .stlats-table.fk {
-  font-size: 10px;
+  font-size: 0.8em;
 }
 .stlats-table.fk td,
 .stlats-table.fk th {
-  font-size: 10px;
-  padding: initial;
+  padding: 0.2rem 0.5rem;
   line-height: initial;
   letter-spacing: initial;
+}
+
+#colorset-selector {
+  width: initial;
 }
 
 footer {
