@@ -85,11 +85,11 @@ const abbrevs = {
   watchfulness: "watch",
 };
 
-const url_prefix = "https://blaseballcors.herokuapp.com/";
+const url_prefix = "https://cors-proxy.blaseball-reference.com/";
 const url = {
-  players: url_prefix + "https://blaseball.com/database/players?ids=",
-  teams: url_prefix + "https://blaseball.com/database/allTeams",
-  tribute: url_prefix + "https://www.blaseball.com/api/getTribute",
+  players: url_prefix + "database/players?ids=",
+  teams: url_prefix + "database/allTeams",
+  tribute: url_prefix + "api/getTribute",
 };
 
 const mild_fk = "?forbidden-knowledge";
