@@ -50,10 +50,13 @@
                 <h1 id="teamname">⚾ All players ⚾</h1>
               </template>
               <template x-if="activeTeam !== null">
-                <h1
-                  x-text="`${teamEmoji(activeTeam)} ${activeTeam.fullName} ${teamEmoji(activeTeam)}`"
-                  id="teamname"
-                ></h1>
+                <h1 id="teamname">
+                  <a
+                    :href="`https://www.blaseball.com/team/${activeTeam.id}`"
+                    x-text="`${teamEmoji(activeTeam)} ${activeTeam.fullName} ${teamEmoji(activeTeam)}`"
+                  >
+                  </a>
+                </h1>
               </template>
             </div>
           </div>

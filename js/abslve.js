@@ -454,7 +454,8 @@ const teamEmoji = (team) => {
   if (team === null) {
     return "⚾";
   }
-  return String.fromCodePoint(Number(team.emoji));
+  var codepoint = Number(team.emoji);
+  return isNaN(codepoint) ? team.emoji : String.fromCodePoint(codepoint);
 };
 
 const teamButtonLabel = (team) => {
