@@ -299,7 +299,6 @@ async function fetchPlayers(ids, isBatter, team) {
     const response_data = await response.json();
     var players = {};
     for (var player of response_data) {
-      bump_hitting(player, 0.1);
       var newPlayer = {
         ...player,
         batter: isBatter,
