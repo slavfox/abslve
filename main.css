@@ -109,6 +109,14 @@ tr:hover {
   border-radius: 1rem;
 }
 
+.legend {
+  justify-content: center;
+}
+
+dt {
+  font-weight: bold;
+}
+
 footer {
   text-align: center;
 }

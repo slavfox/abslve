@@ -330,13 +330,13 @@ const gameData = () => {
       return stlats;
     },
 
-    starTotals(position) {
-      var starTotals = [];
+    starAverages(position) {
+      var averages = [];
       for ([category, stlats] of Object.entries(this.stlatCategories())) {
         if (category === "general") {
-          starTotals.push({
+          averages.push({
             name: "general",
-            value: "Star totals",
+            value: "Star averages",
             color: null,
             colspan: stlats.length,
           });
@@ -352,17 +352,17 @@ const gameData = () => {
               count += 1;
             }
           }
-          starTotals.push({
+          averages.push({
             name: stars,
-            value:
-              this.forbiddenKnowledge === null
-                ? (sum * 10).toFixed(0) / 2
-                : (sum * 10).toFixed(4) / 2,
+            value: (this.forbiddenKnowledge === null
+              ? (sum * 10).toFixed(0) / count / 2
+              : (sum * 10).toFixed(4) / count / 2
+            ).toFixed(2),
             color: this.colorStlat(stars, sum / count),
             colspan: stlats.length,
           });
         } else {
-          starTotals.push({
+          averages.push({
             name: null,
             value: null,
             color: null,
@@ -370,7 +370,7 @@ const gameData = () => {
           });
         }
       }
-      return starTotals;
+      return averages;
     },
 
     activePlayerCategories() {

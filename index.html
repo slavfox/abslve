@@ -136,7 +136,10 @@
                     </template>
                     <template x-if="activeTeam !== null">
                       <tr>
-                        <template x-for="cell in starTotals(role)" :key="cell">
+                        <template
+                          x-for="cell in starAverages(role)"
+                          :key="cell"
+                        >
                           <td
                             x-text="cell.value"
                             :data-label="cell.name"
@@ -207,6 +210,101 @@
           </div>
         </div>
       </div>
+      <template x-if="forbiddenKnowledge !== null">
+        <div>
+          <div class="row">
+            <div class="column center">
+              <hr />
+              <h3>Column explanation:</h3>
+            </div>
+          </div>
+          <div class="row legend">
+            <div class="column column-20">
+              <dl>
+                <dt>allergy</dt>
+                <dd>peanutAllergy</dd>
+                <dt>anticap</dt>
+                <dd>anticapitalism</dd>
+                <dt>chase</dt>
+                <dd>chasiness</dd>
+                <dt>cinnm</dt>
+                <dd>cinnamon</dd>
+                <dt>cold</dt>
+                <dd>coldness</dd>
+                <dt>cont</dt>
+                <dd>continuation</dd>
+                <dt>dead</dt>
+                <dd>deceased</dd>
+              </dl>
+            </div>
+            <div class="column column-20">
+              <dl>
+                <dt>float</dt>
+                <dd>buoyancy</dd>
+                <dt>fric</dt>
+                <dd>groundFriction</dd>
+                <dt>indlg</dt>
+                <dd>indulgence</dd>
+                <dt>laser</dt>
+                <dd>laserlikeness</dd>
+                <dt>martyr</dt>
+                <dd>martyrdom</dd>
+                <dt>moxie</dt>
+                <dd>moxie</dd>
+                <dt>muscl</dt>
+                <dd>musclitude</dd>
+                <dt>omnisc</dt>
+                <dd>omniscience</dd>
+              </dl>
+            </div>
+            <div class="column column-20">
+              <dl>
+                <dt>ruth</dt>
+                <dd>ruthlessness</dd>
+                <dt>soul</dt>
+                <dd>soul</dd>
+                <dt>ssper</dt>
+                <dd>shakespearianism</dd>
+                <dt>supp</dt>
+                <dd>suppression</dd>
+                <dt>tenac</dt>
+                <dd>tenaciousness</dd>
+                <dt>thrst</dt>
+                <dd>baseThirst</dd>
+                <dt>thwack</dt>
+                <dd>thwackability</dd>
+                <dt>tragic</dt>
+                <dd>tragicness</dd>
+              </dl>
+            </div>
+            <div class="column column-20">
+              <dl>
+                <dt>divin</dt>
+                <dd>divinity</dd>
+                <dt>fate</dt>
+                <dd>fate</dd>
+                <dt>fingers</dt>
+                <dd>totalFingers</dd>
+                <dt>op</dt>
+                <dd>overpowerment</dd>
+                <dt>pathtc</dt>
+                <dd>patheticism</dd>
+                <dt>prssr</dt>
+                <dd>pressurization</dd>
+                <dt>unthwk</dt>
+                <dd>unthwackability</dd>
+                <dt>watch</dt>
+                <dd>watchfulness</dd>
+                <dt>🧮</dt>
+                <dd>
+                  arbitrary metric of how big the player's numbers are compared
+                  to their star count
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </template>
       <div class="row">
         <footer class="column column-100">
           <template x-if="forbiddenKnowledge === null">
