@@ -403,9 +403,11 @@ const gameData = () => {
     },
 
     downloadCsv() {
-      var headers = [];
+      var headers = ["teamId",  "team", "id"];
       for (category of Object.values(this.stlatCategories())) {
-        headers = [...headers, ...category];
+        if (!headers.includes(category)){
+          headers = [...headers, ...category];
+        }
       }
       var rows = [headers];
       for (position of this.activePlayerCategories()) {
@@ -414,6 +416,8 @@ const gameData = () => {
           var stlats = headers.map((stlatName) => {
             if (stlatName === "team") {
               return player.team.shorthand;
+            } else if (stlatName === "teamId") {
+              return player.team.id;
             }
             return player[stlatName];
           });
