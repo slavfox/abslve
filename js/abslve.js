@@ -451,20 +451,75 @@ const gameData = () => {
       var colors = [];
       var classes = [];
       for (const team of this.teams) {
-        var team_name = team.nickname.replace(/ /g, "_").replace(/é/g, "e").replace(/&/g, "and").toLowerCase();
+        var team_name = team.nickname
+          .replace(/ /g, "_")
+          .replace(/é/g, "e")
+          .replace(/&/g, "and")
+          .toLowerCase();
         colors.push(`@${team_name}1: ${team.mainColor};`);
-        colors.push(`@${team_name}2: ${team.secondaryColor};\n`);
+        colors.push(`@${team_name}2: ${team.secondaryColor};`);
+        var [r1, g1, b1] = team.mainColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        var [r2, g2, b2] = team.mainColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        colors.push(`@${team_name}1_75: rgba(${r1}, ${g1}, ${b1}, 0.75);`);
+        colors.push(`@${team_name}1_50: rgba(${r1}, ${g1}, ${b1}, 0.50);`);
+        colors.push(`@${team_name}1_25: rgba(${r1}, ${g1}, ${b1}, 0.25);`);
+        colors.push(`@${team_name}2_75: rgba(${r2}, ${g2}, ${b2}, 0.75);`);
+        colors.push(`@${team_name}2_50: rgba(${r2}, ${g2}, ${b2}, 0.50);`);
+        colors.push(`@${team_name}2_25: rgba(${r2}, ${g2}, ${b2}, 0.25);\n`);
         classes.push(
           `.${team_name}1_fg {\n  color: @${team_name}1 !important;\n}`
         );
         classes.push(
+          `.${team_name}1_75_fg {\n  color: @${team_name}1_75 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}1_50_fg {\n  color: @${team_name}1_50 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}1_25_fg {\n  color: @${team_name}1_25 !important;\n}`
+        );
+
+        classes.push(
           `.${team_name}1_bg {\n  background-color: @${team_name}1 !important;\n}`
         );
+        classes.push(
+          `.${team_name}1_75_bg {\n  background-color: @${team_name}1_75 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}1_50_bg {\n  background-color: @${team_name}1_50 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}1_25_bg {\n  background-color: @${team_name}1_25 !important;\n}`
+        );
+
         classes.push(
           `.${team_name}2_fg {\n  color: @${team_name}2 !important;\n}`
         );
         classes.push(
+          `.${team_name}2_75_fg {\n  color: @${team_name}2_75 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_50_fg {\n  color: @${team_name}2_50 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_25_fg {\n  color: @${team_name}2_25 !important;\n}`
+        );
+
+        classes.push(
           `.${team_name}2_bg {\n  background-color: @${team_name}2 !important;\n}\n`
+        );
+        classes.push(
+          `.${team_name}2_75_bg {\n  background-color: @${team_name}2_75 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_50_bg {\n  background-color: @${team_name}2_50 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_25_bg {\n  background-color: @${team_name}2_25 !important;\n}`
         );
       }
       return `${colors.join("\n")}\n\n${classes.join("\n")}`;
