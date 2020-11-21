@@ -403,11 +403,9 @@ const gameData = () => {
     },
 
     downloadCsv() {
-      var headers = ["teamId", "team", "id"];
+      var headers = [];
       for (category of Object.values(this.stlatCategories())) {
-        if (!headers.includes(category)) {
-          headers = [...headers, ...category];
-        }
+        headers = [...headers, ...category];
       }
       var rows = [headers];
       for (position of this.activePlayerCategories()) {
@@ -416,8 +414,6 @@ const gameData = () => {
           var stlats = headers.map((stlatName) => {
             if (stlatName === "team") {
               return player.team.shorthand;
-            } else if (stlatName === "teamId") {
-              return player.team.id;
             }
             return player[stlatName];
           });
@@ -459,16 +455,16 @@ const gameData = () => {
         colors.push(`@${team_name}1: ${team.mainColor};`);
         colors.push(`@${team_name}2: ${team.secondaryColor};\n`);
         classes.push(
-          `.${team_name}1_fg {\n    color: @${team_name}1 !important;\n}`
+          `.${team_name}1_fg {\n  color: @${team_name}1 !important;\n}`
         );
         classes.push(
-          `.${team_name}1_bg {\n    background_color: @${team_name}1 !important;\n}`
+          `.${team_name}1_bg {\n  background_color: @${team_name}1 !important;\n}`
         );
         classes.push(
-          `.${team_name}2_fg {\n    color: @${team_name}2 !important;\n}`
+          `.${team_name}2_fg {\n  color: @${team_name}2 !important;\n}`
         );
         classes.push(
-          `.${team_name}2_bg {\n    background_color: @${team_name}2 !important;\n}\n`
+          `.${team_name}2_bg {\n  background_color: @${team_name}2 !important;\n}\n`
         );
       }
       return `${colors.join("\n")}\n\n${classes.join("\n")}`;
