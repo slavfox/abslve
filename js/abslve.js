@@ -403,9 +403,9 @@ const gameData = () => {
     },
 
     downloadCsv() {
-      var headers = ["teamId",  "team", "id"];
+      var headers = ["teamId", "team", "id"];
       for (category of Object.values(this.stlatCategories())) {
-        if (!headers.includes(category)){
+        if (!headers.includes(category)) {
           headers = [...headers, ...category];
         }
       }
@@ -450,6 +450,28 @@ const gameData = () => {
         }
       }
       return "rgba(255, 255, 255, 0)";
+    },
+    getWikiColors() {
+      var colors = [];
+      var classes = [];
+      for (const team of this.teams) {
+        var team_name = team.nickname.replace(/ /g, "_").toLowerCase();
+        colors.push(`@${team_name}1: ${team.mainColor};`);
+        colors.push(`@${team_name}2: ${team.secondaryColor};\n`);
+        classes.push(
+          `.${team_name}1_fg {\n    color: @${team_name}1 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}1_bg {\n    background_color: @${team_name}1 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_fg {\n    color: @${team_name}2 !important;\n}`
+        );
+        classes.push(
+          `.${team_name}2_bg {\n    background_color: @${team_name}2 !important;\n}\n`
+        );
+      }
+      return `${colors.join("\n")}\n\n${classes.join("\n")}`;
     },
   };
 };
