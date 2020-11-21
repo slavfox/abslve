@@ -451,7 +451,11 @@ const gameData = () => {
       var colors = [];
       var classes = [];
       for (const team of this.teams) {
-        var team_name = team.nickname.replace(/ /g, "_").toLowerCase();
+        var team_name = team.nickname
+          .replace(/ /g, "_")
+          .replace(/é/g, "e")
+          .replace(/&/g, "and")
+          .toLowerCase();
         colors.push(`@${team_name}1: ${team.mainColor};`);
         colors.push(`@${team_name}2: ${team.secondaryColor};\n`);
         classes.push(
