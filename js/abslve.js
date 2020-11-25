@@ -461,7 +461,7 @@ const gameData = () => {
         var [r1, g1, b1] = team.mainColor
           .match(/\w\w/g)
           .map((x) => parseInt(x, 16));
-        var [r2, g2, b2] = team.mainColor
+        var [r2, g2, b2] = team.secondaryColor
           .match(/\w\w/g)
           .map((x) => parseInt(x, 16));
         colors.push(`@${team_name}1_75: rgba(${r1}, ${g1}, ${b1}, 0.75);`);
