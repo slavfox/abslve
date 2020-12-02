@@ -524,6 +524,100 @@ const gameData = () => {
       }
       return `${colors.join("\n")}\n\n${classes.join("\n")}`;
     },
+    getWikiLightColors() {
+      var colors = [];
+      var classes = [];
+      for (const team of this.teams) {
+        var team_name = team.nickname
+          .replace(/ /g, "_")
+          .replace(/é/g, "e")
+          .replace(/&/g, "and")
+          .toLowerCase();
+        colors.push(`@${team_name}1: ${team.mainColor};`);
+        colors.push(`@${team_name}2: ${team.secondaryColor};`);
+        var [r1, g1, b1] = team.mainColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        var [r2, g2, b2] = team.secondaryColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        var c1_brightness = r1 * 0.2126 + g1 * 0.7152 + b1 * 0.0722;
+        var c2_brightness = r2 * 0.2126 + g2 * 0.7152 + b2 * 0.0722;
+        // brighter
+        if (c1_brightness >= c2_brightness) {
+          var [rb, gb, bb] = [r1, g1, b1];
+          var [rd, gd, bd] = [r2, g2, b2];
+        } else {
+          var [rb, gb, bb] = [r2, g2, b2];
+          var [rd, gd, bd] = [r1, g1, b1];
+        }
+        var darkest = Math.min(c1_brightness, c2_brightness);
+        var brightest = Math.max(c1_brightness, c2_brightness);
+        if (brightest < 0.5) {
+          classes.push(
+            `.${team_name}_border {\n  border: medium solid ${team.mainColor} !important;\n}`
+          );
+          classes.push(
+            `.${team_name}_bg {\n  background-color: rgba(${rb}, ${gb}, ${bb}, 0.5) !important;\n}`
+          );
+        } else {
+          classes.push(
+            `.${team_name}_border {\n  border: medium solid ${team.mainColor} !important;\n}`
+          );
+          classes.push(
+            `.${team_name}_bg {\n  background-color: rgba(${rb}, ${gb}, ${bb}, 1.0) !important;\n}`
+          );
+        }
+      }
+      return `${colors.join("\n")}\n\n${classes.join("\n")}`;
+    },
+    getWikiDarkColors() {
+      var colors = [];
+      var classes = [];
+      for (const team of this.teams) {
+        var team_name = team.nickname
+          .replace(/ /g, "_")
+          .replace(/é/g, "e")
+          .replace(/&/g, "and")
+          .toLowerCase();
+        colors.push(`@${team_name}1: ${team.mainColor};`);
+        colors.push(`@${team_name}2: ${team.secondaryColor};`);
+        var [r1, g1, b1] = team.mainColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        var [r2, g2, b2] = team.secondaryColor
+          .match(/\w\w/g)
+          .map((x) => parseInt(x, 16));
+        var c1_brightness = r1 * 0.2126 + g1 * 0.7152 + b1 * 0.0722;
+        var c2_brightness = r2 * 0.2126 + g2 * 0.7152 + b2 * 0.0722;
+        // brighter
+        if (c1_brightness >= c2_brightness) {
+          var [rb, gb, bb] = [r1, g1, b1];
+          var [rd, gd, bd] = [r2, g2, b2];
+        } else {
+          var [rb, gb, bb] = [r2, g2, b2];
+          var [rd, gd, bd] = [r1, g1, b1];
+        }
+        var darkest = Math.min(c1_brightness, c2_brightness);
+        var brightest = Math.max(c1_brightness, c2_brightness);
+        if (darkest > 0.5) {
+          classes.push(
+            `.${team_name}_border {\n  border: medium solid ${team.mainColor} !important;\n}`
+          );
+          classes.push(
+            `.${team_name}_bg {\n  background-color: rgba(${rd}, ${gd}, ${bd}, 0.5) !important;\n}`
+          );
+        } else {
+          classes.push(
+            `.${team_name}_border {\n  border: medium solid ${team.mainColor} !important;\n}`
+          );
+          classes.push(
+            `.${team_name}_bg {\n  background-color: rgba(${rd}, ${gd}, ${bd}, 1.0) !important;\n}`
+          );
+        }
+      }
+      return `${colors.join("\n")}\n\n${classes.join("\n")}`;
+    },
   };
 };
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>abslve colors - slavfox.space</title>
+    <!-- CSS Reset -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+
+    <!-- Milligram CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css"
+    />
+    <link rel="stylesheet" href="main.css" />
+    <script
+      src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"
+      defer
+    ></script>
+    <script src="js/stlats.js"></script>
+    <script src="js/abslve.js"></script>
+  </head>
+  <body>
+    <div x-data="gameData()" x-init="init()" class="container">
+      <div class="row">
+        <div class="column column-100">
+          <pre x-text="getWikiDarkColors()"></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
